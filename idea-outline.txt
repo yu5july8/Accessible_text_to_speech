@@ -1,4 +1,4 @@
-Main idea: using python to create a software or website that people can upload the random document to generate accessible pdf compitable with text-to-speech software
+Main idea: using Python to create software or website that people can upload random documents to generate accessible PDF compatible with text-to-speech software
 
 we have to have python to break the document down so chatGPT can generate the alt text and then tagging is an issue. 
 
