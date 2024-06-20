@@ -1,11 +1,17 @@
 import docx
-import PyPDF2
+from PyPDF2 import PdfReader
 from fpdf import FPDF
 import openai
 import io
+import os
+import uuid
+from pdf2image import convert_from_path
 
 # Function to handle document upload and parsing
 def parse_document(file_path):
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file '{file_path}' does not exist.")
+    
     if file_path.endswith('.docx'):
         return parse_docx(file_path)
     elif file_path.endswith('.pdf'):
@@ -25,7 +31,20 @@ def parse_docx(file_path):
     return content, images
 
 def parse_pdf(file_path):
-    # Use PyPDF2 or pdfplumber to extract text and images
+    # Extract text from PDF
+    content = []
+    reader = PdfReader(file_path)
+    for page in reader.pages:
+        content.append(page.extract_text())
+    
+    # Extract images from PDF
+    images = []
+    pages = convert_from_path(file_path)
+    for page_number, page_data in enumerate(pages):
+        image_path = f"page_{page_number + 1}.png"
+        page_data.save(image_path, 'PNG')
+        images.append(image_path)
+    
     return content, images
 
 def parse_text(file_path):
@@ -46,6 +65,7 @@ def generate_alt_text(images):
 def generate_accessible_pdf(content, images, alt_texts, output_path):
     pdf = FPDF()
     pdf.add_page()
+    pdf.set_font("Arial", size=12)  # Set the font before adding text
     # Add content and images with alt text
     for line in content:
         pdf.multi_cell(0, 10, line)
@@ -53,8 +73,13 @@ def generate_accessible_pdf(content, images, alt_texts, output_path):
     pdf.output(output_path)
 
 # Example usage
-file_path = "example.docx"
-output_path = "accessible_output.pdf"
-content, images = parse_document(file_path)
-alt_texts = generate_alt_text(images)
-generate_accessible_pdf(content, images, alt_texts, output_path)
+file_path = "/Users/yugoiwamoto/Desktop/project_x/example.pdf"
+random_file_name = f"accessible_output_{uuid.uuid4()}.pdf"
+output_path = random_file_name
+try:
+    content, images = parse_document(file_path)
+    alt_texts = generate_alt_text(images)
+    generate_accessible_pdf(content, images, alt_texts, output_path)
+    print(f"Accessible PDF generated at {output_path}")
+except Exception as e:
+    print(f"Error: {e}")
