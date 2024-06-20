@@ -8,3 +8,6 @@ Web versions should be max to 30 pages and app can be unlimited
 
 prototype for mobile app: 
 https://www.figma.com/proto/DY4I1GbOPq2GqbsvDC7baR/PROJECT_X_mobile?node-id=0-1&t=B5Qfa3VxB7XfLgnq-1
+
+Desktop ver: 
+https://www.figma.com/design/SQWUvvD8NSPuSthZGHlijZ/project_x_desktop?node-id=0-1&t=VkijbliPGwnlibQV-1
