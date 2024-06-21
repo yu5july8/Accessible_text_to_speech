@@ -1,6 +1,8 @@
 Flask==2.0.2
 docx
 PyPDF2
-fpdf
+fpdf2
 openai
 pdf2image
+stripe
+Werkzeug==2.0.1
