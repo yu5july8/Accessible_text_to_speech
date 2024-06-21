@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import os
 import docx
 from PyPDF2 import PdfReader
@@ -7,10 +7,16 @@ import openai
 import io
 import uuid
 from pdf2image import convert_from_path
+import stripe
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['ALLOWED_EXTENSIONS'] = {'docx', 'pdf', 'txt'}
+
+# Stripe configuration
+stripe.api_key = 'your_stripe_secret_key'
+YOUR_DOMAIN = 'http://127.0.0.1:5000'
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -78,12 +84,13 @@ def generate_accessible_pdf(content, images, alt_texts, output_path):
 
 @app.route('/')
 def index():
-    return render_template('index.html')  # Ensure this template exists
+    return render_template('index.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         # Process signup data here
+        session['user'] = request.form['email']
         return redirect(url_for('home'))
     return render_template('signup.html')
 
@@ -91,15 +98,21 @@ def signup():
 def login():
     if request.method == 'POST':
         # Process login data here
+        session['user'] = request.form['email']
         return redirect(url_for('home'))
     return render_template('login.html')
 
 @app.route('/home')
 def home():
+    if 'user' not in session:
+        return redirect(url_for('login'))
     return render_template('home.html')
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
+    if 'user' not in session:
+        return redirect(url_for('login'))
+    
     if request.method == 'POST':
         if 'file' not in request.files:
             return redirect(request.url)
@@ -111,11 +124,48 @@ def upload_file():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             content, images = parse_document(file_path)
+
+            # Limit to 15 pages for free users
+            if len(content) > 15 and not session.get('is_premium'):
+                return render_template('upgrade.html')
+
             alt_texts = generate_alt_text(images)
             output_path = os.path.join(app.config['UPLOAD_FOLDER'], f"{uuid.uuid4().hex}.pdf")
             generate_accessible_pdf(content, images, alt_texts, output_path)
             return redirect(url_for('home'))
     return render_template('upload.html')
+
+@app.route('/create-checkout-session', methods=['POST'])
+def create_checkout_session():
+    try:
+        session = stripe.checkout.Session.create(
+            payment_method_types=['card'],
+            line_items=[{
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': 'Premium Subscription',
+                    },
+                    'unit_amount': 2500,
+                },
+                'quantity': 1,
+            }],
+            mode='subscription',
+            success_url=YOUR_DOMAIN + '/success',
+            cancel_url=YOUR_DOMAIN + '/cancel',
+        )
+        return redirect(session.url, code=303)
+    except Exception as e:
+        return str(e)
+
+@app.route('/success')
+def success():
+    session['is_premium'] = True
+    return render_template('success.html')
+
+@app.route('/cancel')
+def cancel():
+    return render_template('cancel.html')
 
 if __name__ == "__main__":
     app.run(debug=True)
