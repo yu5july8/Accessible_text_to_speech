@@ -53,5 +53,6 @@ def upload():
 
 if __name__ == '__main__':
     # Create the database and tables if they don't exist
-    db.create_all()
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)
