@@ -75,25 +75,25 @@ def generate_accessible_pdf(content, images, alt_texts, output_path):
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('mobileindex.html')
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         # Process signup data here
         return redirect(url_for('home'))
-    return render_template('signup.html')
+    return render_template('mobilesignup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         # Process login data here
         return redirect(url_for('home'))
-    return render_template('login.html')
+    return render_template('mobilelogin.html')
 
 @app.route('/home')
 def home():
-    return render_template('home.html')
+    return render_template('mobilehome.html')
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
