@@ -58,8 +58,11 @@ def parse_text(file_path):
 def generate_alt_text(images):
     alt_texts = []
     for image in images:
-        alt_text = openai.Image.create(image=image)
-        alt_texts.append(alt_text['data']['alt_text'])
+        with open(image, 'rb') as img_file:
+            img_data = img_file.read()
+            response = openai.Image.create(image=img_data)
+            alt_text = response['data']['alt_text']
+            alt_texts.append(alt_text)
     return alt_texts
 
 def generate_accessible_pdf(content, images, alt_texts, output_path):
@@ -75,25 +78,25 @@ def generate_accessible_pdf(content, images, alt_texts, output_path):
 
 @app.route('/')
 def index():
-    return render_template('mobileindex.html')
+    return render_template('index.html')  # Ensure this template exists
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
         # Process signup data here
         return redirect(url_for('home'))
-    return render_template('mobilesignup.html')
+    return render_template('signup.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         # Process login data here
         return redirect(url_for('home'))
-    return render_template('mobilelogin.html')
+    return render_template('login.html')
 
 @app.route('/home')
 def home():
-    return render_template('mobilehome.html')
+    return render_template('home.html')
 
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():

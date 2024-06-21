@@ -1,1 +1,6 @@
 Flask==2.0.2
+docx
+PyPDF2
+fpdf
+openai
+pdf2image

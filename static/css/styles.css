@@ -24,6 +24,10 @@ form {
     align-items: flex-start;
 }
 
+label {
+    margin: 10px 0 5px;
+}
+
 input {
     margin-bottom: 15px;
     padding: 10px;
