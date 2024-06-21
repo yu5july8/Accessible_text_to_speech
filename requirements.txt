@@ -1,0 +1,11 @@
+Flask==2.0.2
+docx
+PyPDF2
+fpdf2
+openai
+pdf2image
+stripe
+Werkzeug==2.0.1
+Jinja2==2.11.3
+markupsafe==2.0.1
+itsdangerous==2.0.1
