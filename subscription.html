@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe - DocTune</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Subscribe to DocTune</h1>
+        <p>Subscribe to our monthly plan for $20 and enjoy unlimited page processing. The free version is limited to 20 pages per month and 3 pages per document.</p>
+        <form id="subscription-form">
+            <button id="checkout-button" type="button">Subscribe for $20/month</button>
+        </form>
+    </div>
+    <script>
+        var stripe = Stripe('{{ stripe_public_key }}');
+
+        document.getElementById('checkout-button').addEventListener('click', function () {
+            fetch('/create-checkout-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (sessionId) {
+                return stripe.redirectToCheckout({ sessionId: sessionId });
+            })
+            .then(function (result) {
+                if (result.error) {
+                    alert(result.error.message);
+                }
+            })
+            .catch(function (error) {
+                console.error('Error:', error);
+            });
+        });
+    </script>
+</body>
+</html>
