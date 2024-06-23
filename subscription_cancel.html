@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home - DocTune</title>
+    <title>Subscription Cancelled - DocTune</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to DocTune</h1>
-        <button onclick="window.location.href='{{ url_for('upload') }}'">Upload Document</button>
-        <button onclick="window.location.href='{{ url_for('subscription') }}'">Manage Subscription</button>
+        <h1>Subscription Cancelled</h1>
+        <p>Your subscription has been cancelled. You can still use the free version with limited access.</p>
+        <button onclick="window.location.href='{{ url_for('home') }}'">Go to Home</button>
     </div>
 </body>
 </html>

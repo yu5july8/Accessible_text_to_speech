@@ -10,19 +10,8 @@
 <body>
     <div class="container">
         <h1>DocTune</h1>
-        <img src="{{ url_for('static', filename='images/App icon.webp') }}" alt="App Icon" style="width: 100px; height: auto;">
-        <button id="signUpButton">Sign Up</button>
-        <button id="logInButton">Log In</button>
+        <button onclick="window.location.href='{{ url_for('signup');}}'">Sign Up</button>
+        <button onclick="window.location.href='{{ url_for('login');}}'">Log In</button>
     </div>
-
-    <script>
-        document.getElementById('signUpButton').onclick = function() {
-            window.location.href = "{{ url_for('signup_page') }}";
-        };
-
-        document.getElementById('logInButton').onclick = function() {
-            window.location.href = "{{ url_for('login_page') }}";
-        };
-    </script>
 </body>
 </html>

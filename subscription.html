@@ -16,37 +16,5 @@
         </form>
     </div>
     <script src="{{ url_for('static', filename='js/scripts.js') }}" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkoutButton = document.getElementById('checkout-button');
-            const stripePublicKey = "{{ stripe_public_key }}";
-            const stripe = Stripe(stripePublicKey);
-
-            if (checkoutButton) {
-                checkoutButton.addEventListener('click', function () {
-                    fetch('/create-checkout-session', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    })
-                    .then(function (response) {
-                        return response.json();
-                    })
-                    .then(function (sessionId) {
-                        return stripe.redirectToCheckout({ sessionId: sessionId });
-                    })
-                    .then(function (result) {
-                        if (result.error) {
-                            alert(result.error.message);
-                        }
-                    })
-                    .catch(function (error) {
-                        console.error('Error:', error);
-                    });
-                });
-            }
-        });
-    </script>
 </body>
 </html>

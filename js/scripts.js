@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Stripe public key
-    const stripePublicKey = document.getElementById('stripe-public-key').getAttribute('data-key');
+    // Get the Stripe public key from the HTML element
+    const stripePublicKey = '{{ stripe_public_key }}';
     const stripe = Stripe(stripePublicKey);
 
-    // Event listener for subscription button
+    // Event listener for the subscription button
     const checkoutButton = document.getElementById('checkout-button');
     if (checkoutButton) {
         checkoutButton.addEventListener('click', function () {
@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(function (response) {
                 return response.json();
             })
-            .then(function (sessionId) {
-                return stripe.redirectToCheckout({ sessionId: sessionId });
+            .then(function (data) {
+                return stripe.redirectToCheckout({ sessionId: data.sessionId });
             })
             .then(function (result) {
                 if (result.error) {
