@@ -108,7 +108,7 @@ def create_checkout_session():
                         'product_data': {
                             'name': 'DocTune Monthly Subscription',
                         },
-                        'unit_amount': 2000,
+                        'unit_amount': 20,
                         'recurring': {
                             'interval': 'month',
                         },
