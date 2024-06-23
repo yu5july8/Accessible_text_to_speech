@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import os
 import uuid
@@ -58,8 +58,16 @@ def upload():
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
             # Handle file processing logic here
-            return jsonify({'message': 'File uploaded successfully'}), 200
+            return redirect(url_for('processing'))
     return render_template('upload.html')
+
+@app.route('/processing')
+def processing():
+    return render_template('processing.html')
+
+@app.route('/home')
+def home():
+    return render_template('home.html')
 
 if __name__ == '__main__':
     with app.app_context():
