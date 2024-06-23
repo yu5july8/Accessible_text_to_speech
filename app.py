@@ -45,19 +45,21 @@ def login():
             return jsonify({'message': 'Log-in failed'}), 400
     return render_template('login.html')
 
-@app.route('/upload', methods=['POST'])
+@app.route('/upload', methods=['GET', 'POST'])
 def upload():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    if file:
-        filename = uuid.uuid4().hex + os.path.splitext(file.filename)[1]
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(file_path)
-        # Handle file processing logic here
-        return jsonify({'message': 'File uploaded successfully'}), 200
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            return jsonify({'error': 'No file part'}), 400
+        file = request.files['file']
+        if file.filename == '':
+            return jsonify({'error': 'No selected file'}), 400
+        if file:
+            filename = uuid.uuid4().hex + os.path.splitext(file.filename)[1]
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(file_path)
+            # Handle file processing logic here
+            return jsonify({'message': 'File uploaded successfully'}), 200
+    return render_template('upload.html')
 
 if __name__ == '__main__':
     with app.app_context():
