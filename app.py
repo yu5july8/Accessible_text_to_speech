@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 import uuid
@@ -20,22 +20,30 @@ class User(db.Model):
     email = db.Column(db.String(150), unique=True, nullable=False)
     password = db.Column(db.String(150), nullable=False)
 
-@app.route('/signup', methods=['POST'])
-def signup():
-    data = request.json
-    new_user = User(first_name=data['first_name'], last_name=data['last_name'], email=data['email'], password=data['password'])
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'Sign-up successful'}), 200
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-@app.route('/login', methods=['POST'])
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        data = request.form
+        new_user = User(first_name=data['first_name'], last_name=data['last_name'], email=data['email'], password=data['password'])
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify({'message': 'Sign-up successful'}), 200
+    return render_template('signup.html')
+
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    data = request.json
-    user = User.query.filter_by(email=data['email']).first()
-    if user and user.password == data['password']:
-        return jsonify({'message': 'Log-in successful'}), 200
-    else:
-        return jsonify({'message': 'Log-in failed'}), 400
+    if request.method == 'POST':
+        data = request.form
+        user = User.query.filter_by(email=data['email']).first()
+        if user and user.password == data['password']:
+            return jsonify({'message': 'Log-in successful'}), 200
+        else:
+            return jsonify({'message': 'Log-in failed'}), 400
+    return render_template('login.html')
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -52,7 +60,6 @@ def upload():
         return jsonify({'message': 'File uploaded successfully'}), 200
 
 if __name__ == '__main__':
-    # Create the database and tables if they don't exist
     with app.app_context():
         db.create_all()
     app.run(debug=True)
